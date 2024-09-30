@@ -1,0 +1,199 @@
+@page "/"
+@using AppSaldos.Data
+@using System.Data
+@using System.Dynamic
+@using AppSaldos.Models
+@rendermode InteractiveServer
+@inject DataService DataService
+@inject IJSRuntime js
+
+<PageTitle>Saldos de inventario</PageTitle>
+
+<div class="main">
+    <div class="panel container shadow p-2  mt-3 mb-3 bg-body-tertiary rounded">
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Fecha:</span>
+            <div class="col-8">
+                <SfDatePicker TValue="DateTime?" Placeholder='Seleccione la fecha' Value="@DateValue"></SfDatePicker>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Marca:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@dataMarca" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione una marca" @bind-Value="@valueMarca">
+                    <ComboBoxFieldSettings Text="nom_mar" Value="cod_mar"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Linea:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@dataLinea" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione una linea" @bind-Value="@valueLinea">
+                    <ComboBoxFieldSettings Text="nom_tip" Value="cod_tip"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Grupo:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@dataGrupo" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione un grupo" @bind-Value="@valueGrupo">
+                    <ComboBoxFieldSettings Text="nom_gru" Value="cod_gru"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Bodega:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@dataBodega" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione una bodega" @bind-Value="@valueBodega">
+                    <ComboBoxFieldSettings Text="nom_bod" Value="cod_bod"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Referencia:</span>
+            <div class="col-8">
+                <SfTextBox Placeholder='Referencia' @bind-Value="@valueReferencia"></SfTextBox>
+            </div>
+        </div>
+        <div class="row p-3">
+            <div class="text-center">
+                <SfButton CssClass="e-primary btn-style" @onclick="Consultar">Consultar</SfButton>
+                <SfButton CssClass="e-primary btn-style" @onclick="Limpiar">Limpiar</SfButton>
+            </div>
+        </div>
+    </div>
+
+    <div class="data shadow p-2 mt-3 mb-3 bg-body-tertiary rounded">
+        <div>
+            <SfSpinner @bind-Visible="@VisibleProperty" Label="Cargando...." Size="50" />
+        </div>
+        <div>
+            <SfGrid DataSource="@SaldosInventario" AllowPaging="true" AllowSorting="true" AllowFiltering="true"
+                AllowResizing="true">
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                <GridPageSettings PageSize="10"></GridPageSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(Inventario.cod_ref) HeaderText="Codigo" TextAlign="TextAlign.Center"
+                        Width="120" />
+                    <GridColumn Field=@nameof(Inventario.nom_ref) HeaderText="Nombre" TextAlign="TextAlign.Center"
+                        Width="200" />
+                    <GridColumn Field=@nameof(Inventario.descripcion) HeaderText="Descripcion"
+                        TextAlign="TextAlign.Center" />
+                    <GridColumn Field=@nameof(Inventario.saldo_fin) HeaderText="Saldo" TextAlign="TextAlign.Center"
+                        Width="80" />
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+</div>
+
+<style>
+    .main {
+        display: grid;
+        grid-template-columns: 500px 1fr;
+        grid-template-rows: 1fr;
+        grid-column-gap: 10px;
+        height: 100vh;
+        background: whitesmoke;
+    }
+
+    .panel {
+        grid-area: 1 / 1 / 2 / 2;
+        background: white;
+    }
+
+    .data {
+        grid-area: 1 / 2 / 2 / 3;
+        background: white;
+        position: relative;
+    }
+
+    .btn-style {
+        height: 40px;
+        width: 150px;
+    }
+
+    .e-grid .e-headercell {
+        background: whitesmoke;
+    }
+</style>
+
+@code {
+    private bool VisibleProperty { get; set; } = false;
+    public List<ExpandoObject> SaldosInventario { get; set; } = default!;
+    public List<ExpandoObject> dataMarca { get; set; } = new List<ExpandoObject>();
+    public List<ExpandoObject> dataLinea { get; set; } = new List<ExpandoObject>();
+    public List<ExpandoObject> dataGrupo { get; set; } = new List<ExpandoObject>();
+    public List<ExpandoObject> dataBodega { get; set; } = new List<ExpandoObject>();
+
+    public DateTime DateValue { get; set; } = DateTime.Now;
+    public string valueMarca { get; set; } = "";
+    public string valueLinea { get; set; } = "";
+    public string valueGrupo { get; set; } = "";
+    public string valueBodega { get; set; } = "";
+    public string valueReferencia { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        dataMarca = await DataService.GetDataAsync("select cod_mar,nom_mar from inmae_mar");
+        dataLinea = await DataService.GetDataAsync("select cod_tip,nom_tip from inmae_tip");
+        dataGrupo = await DataService.GetDataAsync("select cod_gru,nom_gru from inmae_gru");
+        dataBodega = await DataService.GetDataAsync("select cod_bod,nom_bod from inmae_bod");
+    }
+
+    public async void Consultar()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(valueBodega))
+            {
+                await js.InvokeVoidAsync("alert", "debe de seleccionar una bodega");
+            }
+
+            string fecha = DateValue.ToString("dd/MM/yyyy");
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@Fecha", fecha},
+                { "@Bod", valueBodega },
+                { "@Mar", valueMarca },
+                { "@Tip", valueLinea },
+                { "@Gru", valueGrupo },
+                { "@tipo", "1" },
+                { "@codemp", "010" },
+                { "@referencia", valueReferencia }
+            };
+
+            VisibleProperty = true;
+            await js.InvokeVoidAsync("console.log", $"valueReferencia:", valueReferencia);
+            VisibleProperty = false;
+
+            var data = await DataService.ExecuteStoredProcedureAsync("_EmpSaldosInventarios", parameters);
+            await js.InvokeVoidAsync("console.log", $"data:", data);
+            SaldosInventario = data;
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+            await js.InvokeVoidAsync("console.error", $"error:{ex}");
+        }
+    }
+
+    public async void Limpiar()
+    {
+        DateValue = DateTime.Now;
+        valueMarca = "";
+        valueLinea = "";
+        valueGrupo = "";
+        valueLinea = "";
+        valueBodega = "";
+        valueReferencia = "";
+    }
+
+
+}
