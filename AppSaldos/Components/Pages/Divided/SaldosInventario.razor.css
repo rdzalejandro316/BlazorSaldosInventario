@@ -1,0 +1,28 @@
+.main {
+    display: grid;
+    grid-template-columns: 500px 1fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 10px;
+    height: 100vh;
+    background: red;
+}
+
+.panel {
+    grid-area: 1 / 1 / 2 / 2;
+    background: white;
+}
+
+.data {
+    grid-area: 1 / 2 / 2 / 3;
+    background: white;
+    position: relative;
+}
+
+.btn-style-divided {
+    height: 40px;
+    width: 150px;
+}
+
+.e-grid .e-headercell {
+    background: whitesmoke;
+}

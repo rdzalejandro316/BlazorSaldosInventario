@@ -1,0 +1,92 @@
+@page "/dividido"
+@using AppSaldos.Data
+@using System.Data
+@using System.Dynamic
+@using AppSaldos.Models
+@rendermode InteractiveServer
+@inject IJSRuntime js
+
+<PageTitle>Dividido</PageTitle>
+
+
+<div class="main">
+    <div class="panel container shadow p-2  mt-3 mb-3 bg-body-tertiary rounded">
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Fecha:</span>
+            <div class="col-8">
+                <SfDatePicker TValue="DateTime?" Placeholder='Seleccione la fecha' Value="@DateValue"></SfDatePicker>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Marca:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@DataMarca" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione una marca" @bind-Value="@ValueMarca">
+                    <ComboBoxFieldSettings Text="nom_mar" Value="cod_mar"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Linea:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@DataLinea" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione una linea" @bind-Value="@ValueLinea">
+                    <ComboBoxFieldSettings Text="nom_tip" Value="cod_tip"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Grupo:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@DataGrupo" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione un grupo" @bind-Value="@ValueGrupo">
+                    <ComboBoxFieldSettings Text="nom_gru" Value="cod_gru"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Bodega:</span>
+            <div class="col-8">
+                <SfComboBox DataSource="@DataBodega" TItem="ExpandoObject" TValue="string"
+                    Placeholder="Seleccione una bodega" @bind-Value="@ValueBodega">
+                    <ComboBoxFieldSettings Text="nom_bod" Value="cod_bod"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+        <div class="row p-2">
+            <span class="col-4 text-end align-content-center">Referencia:</span>
+            <div class="col-8">
+                <SfTextBox Placeholder='Referencia' @bind-Value="@ValueReferencia"></SfTextBox>
+            </div>
+        </div>
+        <div class="row p-3">
+            <div class="text-center">
+                <SfButton CssClass="e-primary btn-style-divided" @onclick="Consultar">Consultar</SfButton>
+                <SfButton CssClass="e-primary btn-style-divided" @onclick="Limpiar">Limpiar</SfButton>
+            </div>
+        </div>
+    </div>
+
+    <div class="data shadow p-2 mt-3 mb-3 bg-body-tertiary rounded">
+        <div>
+            <SfSpinner @bind-Visible="@VisibleProperty" Label="Cargando...." Size="50" />
+        </div>
+        <div>
+            <SfGrid DataSource="@SaldosInventarioList" AllowPaging="true" AllowSorting="true" AllowFiltering="true"
+                AllowResizing="true">
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                <GridPageSettings PageSize="10"></GridPageSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(Inventario.cod_ref) HeaderText="Codigo" TextAlign="TextAlign.Center"
+                        Width="120" />
+                    <GridColumn Field=@nameof(Inventario.nom_ref) HeaderText="Nombre" TextAlign="TextAlign.Center"
+                        Width="200" />
+                    <GridColumn Field=@nameof(Inventario.descripcion) HeaderText="Descripcion"
+                        TextAlign="TextAlign.Center" />
+                    <GridColumn Field=@nameof(Inventario.saldo_fin) HeaderText="Saldo" TextAlign="TextAlign.Center"
+                        Width="80" />
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+</div>
