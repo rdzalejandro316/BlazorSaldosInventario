@@ -16,6 +16,10 @@ builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<DataService>();
 
 
+var signalrServices = builder.Configuration.GetValue<string>("SignalRServices");
+builder.Services.AddSignalRCore().AddAzureSignalR(signalrServices);
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
