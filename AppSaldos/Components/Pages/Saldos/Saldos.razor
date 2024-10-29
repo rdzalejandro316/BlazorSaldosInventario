@@ -10,7 +10,7 @@
 <PageTitle>Saldos de inventario</PageTitle>
 
 <div class="main">
-    <div class="panel container shadow p-2  mt-3 mb-3 bg-body-tertiary rounded">
+    <div class="panel container shadow-sm rounded card p-2 m-3">
         <div class="row p-2">
             <span class="col-4 text-end align-content-center">Fecha:</span>
             <div class="col-8">
@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <div class="data shadow p-2 mt-3 mb-3 bg-body-tertiary rounded">
+    <div class="data shadow-sm rounded card p-2 m-3">
         <div>
             <SfSpinner @bind-Visible="@VisibleProperty" Label="Cargando...." Size="50" />
         </div>
@@ -98,7 +98,6 @@
         grid-template-rows: 1fr;
         grid-column-gap: 10px;
         height: 100vh;
-        background: blue;
     }
 
     .panel {
@@ -184,7 +183,7 @@
         }
     }
 
-    public async void Limpiar()
+    public void Limpiar()
     {
         DateValue = DateTime.Now;
         valueMarca = "";
